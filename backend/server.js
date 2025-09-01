@@ -8,10 +8,6 @@ const adminRoutes = require("./routes/adminRoutes");
 const blogRoutes = require("./routes/blogRoutes");
 const testimonialRoutes = require("./routes/testimonialRoutes");
 
-const cors = require("cors");
-app.use(cors());
-
-
 // Load env vars
 dotenv.config();
 

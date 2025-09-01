@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yashraj Business Group - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles - Using company red theme */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #e81a39 0%, #c51432 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+            box-shadow: 4px 0 15px rgba(232, 26, 57, 0.15);
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-logo {
+            width: 140px;
+            height: auto;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            opacity: 0.9;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 0.875rem 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border-left-color: #fff;
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border-left-color: #fff;
+        }
+
+        .nav-item i {
+            margin-right: 0.75rem;
+            width: 16px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .main-content.sidebar-collapsed {
+            margin-left: 0;
+        }
+
+        /* Header Styles */
+        .header {
+            background: white;
+            padding: 1.25rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #e81a39;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #e81a39;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #e81a39;
+            padding: 0.5rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .admin-avatar {
+            width: 32px;
+            height: 32px;
+            background: #e81a39;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Content Area Styles */
+        .content {
+            padding: 2rem;
+        }
+
+        .welcome-section {
+            background: linear-gradient(135deg, #e81a39 0%, #c51432 100%);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(232, 26, 57, 0.25);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/><circle cx="50" cy="50" r="20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></svg>');
+            opacity: 0.3;
+        }
+
+        .welcome-message {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.75rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid #e81a39;
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-number {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #e81a39;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* Table Section Styles */
+        .table-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.75rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            background: linear-gradient(90deg, #f8fafc 0%, #fff 100%);
+        }
+
+        .table-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .table-title i {
+            color: #e81a39;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .activities-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .activities-table th {
+            background: linear-gradient(90deg, #f1f5f9 0%, #f8fafc 100%);
+            padding: 1.25rem 2rem;
+            text-align: left;
+            font-weight: 600;
+            color: #475569;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .activities-table td {
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        .activities-table tr:nth-child(even) {
+            background-color: rgba(248, 250, 252, 0.5);
+        }
+
+        .activities-table tr:hover {
+            background-color: rgba(232, 26, 57, 0.04);
+            transform: scale(1.001);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-completed {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        .status-failed {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .activity-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            margin-right: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .activity-login {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .activity-backup {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .activity-security {
+            background: #dcfce7;
+            color: #059669;
+        }
+
+        .activity-system {
+            background: #e0e7ff;
+            color: #6366f1;
+        }
+
+        /* Overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 260px;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .header-title {
+                font-size: 1.5rem;
+            }
+
+            .content {
+                padding: 1rem;
+            }
+
+            .welcome-section {
+                padding: 2rem 1.5rem;
+            }
+
+            .welcome-message {
+                font-size: 1.75rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-header {
+                padding: 1.5rem;
+            }
+
+            .activities-table th,
+            .activities-table td {
+                padding: 1rem;
+            }
+
+            .admin-info {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-title {
+                font-size: 1.25rem;
+            }
+
+            .welcome-message {
+                font-size: 1.5rem;
+            }
+
+            .activities-table th,
+            .activities-table td {
+                padding: 0.75rem;
+                font-size: 0.875rem;
+            }
+
+            .stat-card {
+                padding: 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 1.875rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <svg class="sidebar-logo" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="200" height="60" fill="white" rx="4"/>
+                    <text x="100" y="25" text-anchor="middle" fill="#e81a39" font-family="Arial, sans-serif" font-weight="bold" font-size="14">YASHRAJ</text>
+                    <text x="100" y="40" text-anchor="middle" fill="#e81a39" font-family="Arial, sans-serif" font-size="10">BUSINESS GROUP</text>
+                    <text x="100" y="52" text-anchor="middle" fill="#666" font-family="Arial, sans-serif" font-size="8">ADMIN PANEL</text>
+                </svg>
+            </div>
+            <div class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <i class="fa fa-home"></i>Dashboard
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa fa-users"></i>Employees
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa fa-shield"></i>Security Services
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa fa-building"></i>Clients
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa fa-file-text"></i>Reports
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa fa-cog"></i>Settings
+                </a>
+                <a href="#" class="nav-item" id="logoutBtn">
+                    <i class="fa fa-sign-out"></i>Logout
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">☰</button>
+                    <h1 class="header-title">Admin Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="admin-info">
+                        <div class="admin-avatar">YA</div>
+                        <span>Yashraj Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="content">
+                <!-- Welcome Section -->
+                <section class="welcome-section">
+                    <h2 class="welcome-message">Welcome, Admin!</h2>
+                    <p class="welcome-subtitle">Manage Yashraj Business Group operations from this centralized dashboard</p>
+                </section>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">145</div>
+                        <div class="stat-label">Active Security Guards</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">67</div>
+                        <div class="stat-label">Active Clients</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">23</div>
+                        <div class="stat-label">Housekeeping Staff</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">8</div>
+                        <div class="stat-label">New Enquiries</div>
+                    </div>
+                </div>
+
+                <!-- Recent Activities Table -->
+                <section class="table-section">
+                    <div class="table-header">
+                        <h3 class="table-title">
+                            <i class="fa fa-clock-o"></i>Recent Activities
+                        </h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="activities-table">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Activity</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activitiesTableBody">
+                                <!-- Table content will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Font Awesome CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></script>
+
+    <script>
+        // DOM Elements
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const activitiesTableBody = document.getElementById('activitiesTableBody');
+
+        // Sample data for the activities table - Yashraj Business Group specific
+        const sampleActivities = [
+            {
+                date: '2025-09-01 10:30',
+                activity: 'New security guard deployed to Sangli Industrial Estate',
+                type: 'Security',
+                status: 'completed',
+                icon: 'shield'
+            },
+            {
+                date: '2025-09-01 09:15',
+                activity: 'Monthly compliance report submitted for client ABC Corp',
+                type: 'Compliance',
+                status: 'completed',
+                icon: 'file'
+            },
+            {
+                date: '2025-09-01 08:45',
+                activity: 'Housekeeping team assigned to new residential project',
+                type: 'Housekeeping',
+                status: 'pending',
+                icon: 'home'
+            },
+            {
+                date: '2025-08-31 16:20',
+                activity: 'PF/ESI registration completed for 5 new employees',
+                type: 'HR',
+                status: 'completed',
+                icon: 'users'
+            },
+            {
+                date: '2025-08-31 14:30',
+                activity: 'Security audit conducted at Mumbai client site',
+                type: 'Security',
+                status: 'completed',
+                icon: 'shield'
+            },
+            {
+                date: '2025-08-31 12:15',
+                activity: 'Contract staffing inquiry from IT company',
+                type: 'Inquiry',
+                status: 'pending',
+                icon: 'phone'
+            },
+            {
+                date: '2025-08-30 17:45',
+                activity: 'Facility management services started at Pune office',
+                type: 'Facility',
+                status: 'completed',
+                icon: 'building'
+            },
+            {
+                date: '2025-08-30 11:20',
+                activity: 'GST return filing deadline reminder sent',
+                type: 'Tax',
+                status: 'failed',
+                icon: 'warning'
+            }
+        ];
+
+        // Activity type to icon mapping
+        const activityIcons = {
+            'Security': 'shield',
+            'Housekeeping': 'home',
+            'Facility': 'building',
+            'HR': 'users',
+            'Compliance': 'file-text',
+            'Inquiry': 'phone',
+            'Tax': 'calculator'
+        };
+
+        // Populate activities table
+        function populateActivitiesTable() {
+            activitiesTableBody.innerHTML = '';
+            
+            sampleActivities.forEach(activity => {
+                const row = document.createElement('tr');
+                const iconClass = activityIcons[activity.type] || 'info';
+                
+                row.innerHTML = `
+                    <td>${formatDateTime(activity.date)}</td>
+                    <td>
+                        <div style="display: flex; align-items: center;">
+                            <span class="activity-icon activity-${activity.type.toLowerCase()}">
+                                <i class="fa fa-${iconClass}"></i>
+                            </span>
+                            ${activity.activity}
+                        </div>
+                    </td>
+                    <td>
+                        <span style="background: #f1f5f9; color: #475569; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem; font-weight: 500;">
+                            ${activity.type}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-${activity.status}">
+                            <i class="fa fa-${getStatusIcon(activity.status)}"></i>
+                            ${activity.status.charAt(0).toUpperCase() + activity.status.slice(1)}
+                        </span>
+                    </td>
+                `;
+                activitiesTableBody.appendChild(row);
+            });
+        }
+
+        // Get status icon
+        function getStatusIcon(status) {
+            switch(status) {
+                case 'completed': return 'check-circle';
+                case 'pending': return 'clock-o';
+                case 'failed': return 'times-circle';
+                default: return 'info-circle';
+            }
+        }
+
+        // Format date and time for display
+        function formatDateTime(dateString) {
+            const date = new Date(dateString);
+            const dateFormatted = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric'
+            });
+            const timeFormatted = date.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+            return `${dateFormatted}<br><small style="color: #64748b;">${timeFormatted}</small>`;
+        }
+
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+            
+            // Update main content margin for desktop
+            if (window.innerWidth > 768) {
+                if (sidebar.classList.contains('collapsed')) {
+                    sidebar.classList.remove('collapsed');
+                    mainContent.classList.remove('sidebar-collapsed');
+                } else {
+                    sidebar.classList.add('collapsed');
+                    mainContent.classList.add('sidebar-collapsed');
+                }
+            }
+        }
+
+        // Handle window resize
+        function handleResize() {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            }
+        }
+
+        // Handle sidebar navigation
+        function handleSidebarNavigation(e) {
+            if (e.target.classList.contains('nav-item') && e.target.id !== 'logoutBtn') {
+                // Remove active class from all nav items
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Add active class to clicked item
+                e.target.classList.add('active');
+                
+                // Close sidebar on mobile after navigation
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                }
+            }
+        }
+
+        // Handle logout
+        function handleLogout(e) {
+            e.preventDefault();
+            
+            // Show confirmation dialog
+            if (confirm('Are you sure you want to logout from Yashraj Admin Panel?')) {
+                // Redirect to admin.html
+                window.location.href = 'admin.html';
+            }
+        }
+
+        // Counter animation for stats
+        function animateCounters() {
+            document.querySelectorAll('.stat-number').forEach(counter => {
+                const target = parseInt(counter.textContent);
+                let count = 0;
+                const increment = target / 100;
+                
+                const updateCounter = () => {
+                    if (count < target) {
+                        count += increment;
+                        counter.textContent = Math.floor(count);
+                        setTimeout(updateCounter, 20);
+                    } else {
+                        counter.textContent = target;
+                    }
+                };
+                
+                updateCounter();
+            });
+        }
+
+        // Event Listeners
+        menuToggle.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+        window.addEventListener('resize', handleResize);
+        sidebar.addEventListener('click', handleSidebarNavigation);
+        logoutBtn.addEventListener('click', handleLogout);
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            populateActivitiesTable();
+            setTimeout(animateCounters, 500); // Delay animation for better effect
+            
+            // Close sidebar on mobile by default
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Keyboard accessibility for sidebar toggle
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                toggleSidebar();
+            }
+        });
+    </script>
+</body>
+</html>

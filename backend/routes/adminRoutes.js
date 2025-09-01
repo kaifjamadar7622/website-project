@@ -1,102 +1,61 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const jwt = require('jsonwebtoken');
-const Admin = require('../models/Admin');
+const Admin = require("../models/admin"); // your model
+const jwt = require("jsonwebtoken");
 
-// ✅ Test route (fixes "Cannot GET /api/admin")
-router.get('/', (req, res) => {
-    res.json({ message: 'Admin API is working 🚀' });
-});
+// ✅ Admin Login
+router.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
-// Register admin
-router.post('/register', async (req, res) => {
-    try {
-        const { username, password } = req.body;
-
-        // Check if admin exists
-        const adminExists = await Admin.findOne({ username });
-        if (adminExists) {
-            return res.status(400).json({ message: 'Admin already exists' });
-        }
-
-        // Create admin
-        const admin = await Admin.create({
-            username,
-            password
-        });
-
-        if (admin) {
-            res.status(201).json({
-                _id: admin._id,
-                username: admin.username,
-                token: generateToken(admin._id)
-            });
-        }
-    } catch (error) {
-        res.status(400).json({ message: error.message });
+    // Check if admin exists
+    const admin = await Admin.findOne({ username });
+    if (!admin) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
-});
 
-// Login admin
-router.post('/login', async (req, res) => {
-    try {
-        const { username, password } = req.body;
-
-        // Check for admin
-        const admin = await Admin.findOne({ username }).select('+password');
-        if (!admin) {
-            return res.status(401).json({ message: 'Invalid credentials' });
-        }
-
-        // Check password
-        const isMatch = await admin.matchPassword(password);
-        if (!isMatch) {
-            return res.status(401).json({ message: 'Invalid credentials' });
-        }
-
-        res.json({
-            _id: admin._id,
-            username: admin.username,
-            token: generateToken(admin._id)
-        });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
+    // Check password
+    const isMatch = await admin.matchPassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
-});
 
-// Seed admin account
-router.get('/seed', async (req, res) => {
-    try {
-        // Check if any admin exists
-        const adminCount = await Admin.countDocuments();
-        
-        if (adminCount > 0) {
-            return res.status(400).json({ message: 'Admin account already exists' });
-        }
-        
-        // Create default admin
-        const admin = await Admin.create({
-            username: 'admin',
-            password: 'admin123'
-        });
+    // Generate token
+    const token = jwt.sign(
+      { id: admin._id, username: admin.username },
+      process.env.JWT_SECRET || "secretkey",
+      { expiresIn: "1h" }
+    );
 
-        if (admin) {
-            res.status(201).json({
-                message: 'Default admin account created successfully',
-                _id: admin._id,
-                username: admin.username
-            });
-        }
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-});
-
-// Generate JWT
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: '30d'
+    res.json({
+      message: "Login successful",
+      token,
+      admin: { id: admin._id, username: admin.username },
     });
-};
+  } catch (error) {
+    console.error("Login Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ Create Admin (one-time use)
+router.post("/register", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const existing = await Admin.findOne({ username });
+    if (existing) {
+      return res.status(400).json({ message: "Admin already exists" });
+    }
+
+    const admin = new Admin({ username, password });
+    await admin.save();
+
+    res.status(201).json({ message: "Admin created successfully" });
+  } catch (error) {
+    console.error("Register Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;

@@ -769,8 +769,6 @@
         async function loadTestimonials() {
             try {
                 const response = await fetch('http://localhost:5000/api/testimonials');
-
-                
                 const testimonials = await response.json();
                 const testimonialContainer = document.getElementById('testimonial-slide');
 

@@ -133,6 +133,55 @@
                 left: 0px
             }
         }
+.video-background {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.video-background video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  z-index: -1; /* keep video in background */
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;  /* horizontal center */
+  align-items: center;      /* vertical center */
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5); /* optional dark overlay */
+}
+
+.video-overlay .slider-text {
+  color: #fff;
+  max-width: 800px;
+}
+
+.video-overlay .slider-text h2 {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.video-overlay .slider-text p {
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+
+
+
     </style>
 </head>
 
@@ -195,7 +244,7 @@
                                                 <li class="current-page-item"><a href="index.html" data-en="home" data-mr="मुख्यपृष्ठ">home</a></li>
                                                 <li><a href="#" data-en="about us" data-mr="आमच्याबद्दल">about us</a>
                                                     <ul>
-                                                        <li><a href="company-profile.html" data-en="Company Profile" data-mr="कंपनी प्रोफाइल">Company Profile</a></li>
+                                                        <li><a href="about.html" data-en="Company Profile" data-mr="कंपनी प्रोफाइल">Company Profile</a></li>
                                                     </ul>
                                                 </li>
                                                 <li>
@@ -210,7 +259,7 @@
                                                         <li><a href="all-taxation.html" data-en="all taxation work" data-mr="सर्व कर कार्य">all taxation work</a></li>
                                                     </ul>
                                                 </li>
-                                                <li><a href="gallary.html" data-en="Gallary" data-mr="गॅलरी">Gallary</a></li>
+                                            <li><a href="gallary.html" data-en="Gallary" data-mr="गॅलरी">Gallary</a></li>
                                                 <li><a href="career.html" data-en="career" data-mr="करिअर">career</a></li>
                                                 <li><a href="blog.html" data-en="blog" data-mr="ब्लॉग">blog</a></li>
                                                 <li><a href="contact.html" data-en="contact" data-mr="संपर्क">contact</a></li>
@@ -241,63 +290,33 @@
     </header>
     <!-- Header Area End -->
 
-    <!-- Slider Area Start -->
-    <section class="bleezy-slider-area">
-        <div class="bleezy-slide">
-            <div class="bleezy-main-slide slide-item-1">
-                <div class="bleezy-main-caption">
-                    <div class="bleezy-caption-cell">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="slider-text">
-                                        <h2 data-en="yashraj security Guard & bouncers services" data-mr="यशराज सुरक्षा रक्षक आणि बाउन्सर सेवा">yashraj security Guard & bouncers services</h2>
-                                        <p data-en="We provide security guard services to Corporate, Industrial, Residential, Bank & ATMs, IT, Hospitals & Malls" data-mr="आम्ही कॉर्पोरेट, औद्योगिक, निवासी, बँक आणि एटीएम, आयटी, हॉस्पिटल आणि मॉल्ससाठी सुरक्षा रक्षक सेवा प्रदान करतो">We provide security guard services to Corporate, Industrial, Residential, Bank & ATMs, IT, Hospitals & Malls</p>
-                                        <a href="about.html" class="bleezy-btn" data-en="Know More.." data-mr="अधिक जाणून घ्या..">Know More..</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="bleezy-main-slide slide-item-2">
-                <div class="bleezy-main-caption">
-                    <div class="bleezy-caption-cell">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="slider-text">
-                                        <h2 data-en="Yashraj House Keeping services" data-mr="यशराज हाउस कीपिंग सेवा">Yashraj House Keeping services</h2>
-                                        <p data-en="We provide complete house keeping, fog sanitization & facility management services for corporate, residential & IT" data-mr="आम्ही कॉर्पोरेट, निवासी आणि आयटीसाठी पूर्ण हाउस कीपिंग, फॉग सॅनिटायझेशन आणि सुविधा व्यवस्थापन सेवा प्रदान करतो">We provide complete house keeping, fog sanitization & facility management services for corporate, residential & IT</p>
-                                        <a href="#" class="bleezy-btn" data-en="Know more.." data-mr="अधिक जाणून घ्या..">Know more..</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="bleezy-main-slide slide-item-3">
-                <div class="bleezy-main-caption">
-                    <div class="bleezy-caption-cell">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="slider-text">
-                                        <h2 data-en="Yashraj Taxway Consultancy" data-mr="यशराज टॅक्सवे सल्लागार">Yashraj Taxway Consultancy</h2>
-                                        <p data-en="We provide all taxation work, Business Registrations & Licenses, GST, PF, ESI & Monthly compliances" data-mr="आम्ही सर्व कर कार्य, व्यवसाय नोंदणी आणि परवाने, जीएसटी, पीएफ, ईएसआय आणि मासिक पालन प्रदान करतो">We provide all taxation work, Business Registrations & Licenses, GST, PF, ESI & Monthly compliances</p>
-                                        <a href="#" class="bleezy-btn" data-en="learn more" data-mr="अधिक जाणा">learn more</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Slider Area End -->
+   <!-- Background Video Section Start -->
+<section class="video-background">
+  <!-- Background Video -->
+  <video autoplay muted loop playsinline id="bgVideo">
+    <source src="assets/videos/YBG.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Overlay Text Above Video -->
+  <div class="video-overlay">
+    <div class="slider-text">
+      <h2 data-en="Yashraj Business Group" data-mr="यशराज बिझनेस ग्रुप">
+        Yashraj Business Group
+      </h2>
+      <p data-en="Security, Manpower, Facility, Consultancy – All Under One Roof" 
+         data-mr="सुरक्षा, मनुष्यबळ, सुविधा, सल्लामसलत – सर्व एका छताखाली">
+        Security, Manpower, Facility, Consultancy – All Under One Roof
+      </p>
+      <a href="about.html" class="bleezy-btn" data-en="Know More.." data-mr="अधिक जाणून घ्या..">
+        Know More..
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Background Video Section End -->
+
 
     <!-- Promo Area Start -->
     <section class="bleezy-promo-area section_100">
@@ -348,6 +367,12 @@
                 </div>
             </div>
         </div>
+        <script>
+    // Trigger animation on page load
+    window.addEventListener('load', function () {
+        document.querySelector('.promo-heading h2').classList.add('animate');
+    }); 
+</script>
     </section>
     <!-- Promo Area End -->
 
